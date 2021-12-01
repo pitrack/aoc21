@@ -1,4 +1,7 @@
 import torch
+torch.set_default_tensor_type('torch.cuda.FloatTensor')
+# cpu: 0.63s
+# gpu: 1.91s
 
 # Read in lines
 in_file = open("input", 'r')
@@ -9,7 +12,6 @@ increase = (measurements[:-1] - measurements[1:]) < 0
 print(torch.sum(increase))
 
 # Part 2
-
 sums = torch.nn.AvgPool1d(3, stride=1)
 pooled = sums(measurements.view(1, 1, -1)).squeeze()
 increase = (pooled[:-1] - pooled[1:]) < 0
