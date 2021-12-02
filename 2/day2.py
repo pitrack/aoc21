@@ -1,7 +1,7 @@
 import torch
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 torch.set_printoptions(sci_mode=False)
-# CPU: 0.68s, GPU: 2.2s
+# CPU: 0.55s, GPU: 2.1s
 
 # Read in lines
 word_map = {
@@ -20,6 +20,5 @@ print(torch.prod(final_loc))
 
 # Part 2
 h_dir, a_dir = torch.unbind(movements, dim=1)
-total_v_dir = h_dir * (torch.tril(torch.ones(h_dir.shape[0], h_dir.shape[0])).matmul(a_dir))
-new_movements = torch.stack((h_dir, total_v_dir), dim=1)
+new_movements = torch.stack((h_dir, h_dir * torch.cumsum(a_dir, dim=0)), dim=1)
 print(torch.prod(torch.sum(new_movements, dim=0).int()))
