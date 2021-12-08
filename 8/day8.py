@@ -1,9 +1,10 @@
 import torch
-import re
+import time
 torch.set_default_tensor_type('torch.FloatTensor')
 torch.set_printoptions(sci_mode=False)
-# cpu: 0.6s-0.7s, like always.
-# gpu: ~5s
+# cpu: 0.062 + 0.068
+# gpu: 2.8 + 3.8
+start = time.time()
 
 MAPPING = {
     "a": torch.Tensor([1, 0, 0, 0, 0, 0, 0]),
@@ -33,7 +34,7 @@ target = torch.stack(rights)
 # Part 1
 num_segs = torch.sum(target, dim=2)
 print(torch.sum(num_segs < 5) + torch.sum(num_segs > 6))
-
+print(time.time() - start)
 # Part 2
 DISPLAY = torch.Tensor(
     [[1, 1, 1, 0, 1, 1, 1], # 0
@@ -53,7 +54,8 @@ known_v = known.svd().V.abs()
 all_perms = known_v.matmul(DISPLAY_V_inv).transpose(2, 1) # we could be done here! instad, more math:
 fixed_wires = all_perms.matmul(target.transpose(2, 1)).transpose(2, 1)
 diff = torch.abs(fixed_wires.unsqueeze(2) - DISPLAY.view(1, 1, 10, 7))
-digits = torch.argmin(diff.sum(dim=-1), dim=-1)# .float().cuda()
-base_10 = torch.Tensor([1000, 100, 10, 1])# .float().cuda()
+digits = torch.argmin(diff.sum(dim=-1), dim=-1)#.float().cuda()
+base_10 = torch.Tensor([1000, 100, 10, 1])#.float().cuda()
 
 print(torch.sum(digits * base_10))
+print(time.time() - start)
